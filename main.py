@@ -2,14 +2,10 @@ import discord
 from discord.ext import tasks, commands
 
 import json,requests
+from datas import datas
 
 
-
-TOKEN = "your discord token"
-MY_GUILD = discord.Object(id="your guild id")
-etherscan_key = "your etherscan id"
-COIN_MARKET_CAP = "your coinmarketcap key"
-
+MY_GUILD = discord.Object(id=datas.MY_GUILD)
 FILE = "datas/wallets_adress.txt"
 intents = discord.Intents.all()
 bot=commands.Bot(command_prefix="!", intents=intents)
@@ -47,7 +43,7 @@ async def wallets(interaction: discord.Interaction):
     }
     headers = {
     'Accepts': 'application/json',
-    'X-CMC_PRO_API_KEY': COIN_MARKET_CAP,
+    'X-CMC_PRO_API_KEY': datas.COIN_MARKET_CAP,
     }
     r = requests.get(url,params=parameters,headers=headers)
     json_datas =json.loads(r.text)
@@ -66,7 +62,7 @@ async def wallets(interaction: discord.Interaction):
     btc_quantity=0
     for line in lines:
         if line[0]=="eth":
-            url = f"https://api.etherscan.io/api?module=account&action=balance&address={line[1]}&tag=latest&apikey={etherscan_key}"
+            url = f"https://api.etherscan.io/api?module=account&action=balance&address={line[1]}&tag=latest&apikey={datas.etherscan_key}"
             r = requests.get(url)
             print("eth",r)
             result = r.json()["result"]
@@ -111,4 +107,21 @@ async def add_wallets(interaction: discord.Interaction,blockchain:discord.app_co
     else:
         await interaction.response.send_message(f"l'adresse {adress} éxiste déja dans la base de donné ")
 
-bot.run(TOKEN)
+@bot.tree.command(name="remove_wallet",description="permet de retirer un wallet")
+async def remove_wallet(interaction: discord.Interaction,adress:str):
+    line_to_delete = ""
+    file_content=""
+    with open(FILE,"r") as f:
+        for line in f:
+            file_content+=line
+            line = json.loads(line)
+            if line[1]==adress:
+                line_to_delete = json.dumps(line)+"\n"
+    with open(FILE,"w") as f:
+        f.write(file_content.replace(line_to_delete,""))
+    if line_to_delete:
+        await interaction.response.send_message(f"le wallet {adress} a bien été retiré de la base de donné ")
+    else:
+        await interaction.response.send_message(f"le wallet {adress} n'as pas été trouvé ")
+
+bot.run(datas.TOKEN)
