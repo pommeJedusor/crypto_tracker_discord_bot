@@ -23,6 +23,7 @@ async def verif_wallet_fichier(adress):
 @bot.event
 async def on_ready():
     try:
+        await bot.load_extension('cogs.courses.courses')
         synced = await bot.tree.sync()
         print(f"synced {len(synced) } command(s)")
     except Exception as e:
