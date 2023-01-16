@@ -4,7 +4,6 @@ from discord.ext import tasks, commands
 import json,requests
 from datas import datas
 
-
 MY_GUILD = discord.Object(id=datas.MY_GUILD)
 FILE = "datas/wallets_adress.txt"
 intents = discord.Intents.all()
@@ -21,8 +20,6 @@ async def verif_wallet_fichier(adress):
                 return True
         return False
 
-
-
 @bot.event
 async def on_ready():
     try:
@@ -30,7 +27,6 @@ async def on_ready():
         print(f"synced {len(synced) } command(s)")
     except Exception as e:
         print(e)
-
 
 @bot.tree.command(name="wallets",description="permet de voir les wallets")
 async def wallets(interaction: discord.Interaction):
@@ -51,7 +47,6 @@ async def wallets(interaction: discord.Interaction):
     ETH_price = json_datas["data"][1]["quote"]["EUR"]["price"]
     BTC_price = int(str(BTC_price).split(".")[0])
     ETH_price = int(str(ETH_price).split(".")[0])
-
 
     lines=[]
     with open(FILE,"r") as f:
@@ -74,7 +69,6 @@ async def wallets(interaction: discord.Interaction):
             result = r.json()["chain_stats"]["funded_txo_sum"]-r.json()["chain_stats"]["spent_txo_sum"]
             btc_quantity+=result
             
-
     #eth
     eth_eur = str(eth_quantity * ETH_price).split(".")[0]
     eth_quantity = str(eth_quantity).split(".")
@@ -91,7 +85,6 @@ async def wallets(interaction: discord.Interaction):
     btc_eur = str(float(btc_quantity.replace(",",".")) * BTC_price).split(".")[0]
     text+=f"\nvous possédez {btc_quantity} bitcoin pour une valeur de {btc_eur} euros "
     
-
     await interaction.response.send_message(text)
     
 @bot.tree.command(name="add_wallets",description="permet d'ajouter un wallet")
