@@ -73,7 +73,7 @@ async def wallets(interaction: discord.Interaction):
     #eth
     eth_eur = str(eth_quantity * ETH_price).split(".")[0]
     eth_quantity = str(eth_quantity).split(".")
-    text=f"vous possédez {eth_quantity[0]},{eth_quantity[1][:3]} Ethers pour une valeur de {eth_eur} euros "
+    text=f"vous possédez {eth_quantity[0]},{eth_quantity[1][:5]} Ethers pour une valeur de {eth_eur} euros "
 
     #btc
     btc_quantity=str(btc_quantity)
@@ -86,8 +86,8 @@ async def wallets(interaction: discord.Interaction):
     btc_eur = str(float(btc_quantity.replace(",",".")) * BTC_price).split(".")[0]
     text+=f"\nvous possédez {btc_quantity} bitcoin pour une valeur de {btc_eur} euros \n"
     
-    text+=f"le prix du bitcoin est de {BTC_price} \n"
-    text+=f"le prix de l'ether est de {ETH_price} "
+    text+=f"le prix du bitcoin est de {BTC_price} euros\n"
+    text+=f"le prix de l'ether est de {ETH_price} euros\n"
     await interaction.response.send_message(text)
     
 @bot.tree.command(name="add_wallets",description="permet d'ajouter un wallet")
