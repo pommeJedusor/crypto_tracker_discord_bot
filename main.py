@@ -23,6 +23,7 @@ async def verif_wallet_fichier(adress):
 @bot.event
 async def on_ready():
     try:
+        await bot.load_extension('cogs.cogs_instant_gaming.instant_gaming')
         await bot.load_extension('cogs.courses.courses')
         synced = await bot.tree.sync()
         print(f"synced {len(synced) } command(s)")
@@ -102,6 +103,32 @@ async def add_wallets(interaction: discord.Interaction,blockchain:discord.app_co
         await interaction.response.send_message(f"l'adresse {adress} a bien été ajouté ")
     else:
         await interaction.response.send_message(f"l'adresse {adress} éxiste déja dans la base de donné ")
+
+@bot.tree.command(name="crypto_price",description="permet de voir les prix des cryptos")
+async def wallets(interaction: discord.Interaction):
+    url = 'https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest'
+    parameters = {
+    'start':'1',
+    'limit':'2',
+    'convert':'USD'
+    }
+    headers = {
+    'Accepts': 'application/json',
+    'X-CMC_PRO_API_KEY': datas.COIN_MARKET_CAP,
+    }
+    r = requests.get(url,params=parameters,headers=headers)
+    json_datas =json.loads(r.text)
+    BTC_price = json_datas["data"][0]["quote"]["USD"]["price"]
+    ETH_price = json_datas["data"][1]["quote"]["USD"]["price"]
+    BTC_price = int(str(BTC_price).split(".")[0])
+    ETH_price = int(str(ETH_price).split(".")[0])
+
+    text=""
+    text+=f"le prix du bitcoin est de {BTC_price} dollars\n"
+    text+=f"le prix de l'ether est de {ETH_price} dollars"
+
+
+    await interaction.response.send_message(text)
 
 @bot.tree.command(name="remove_wallet",description="permet de retirer un wallet")
 async def remove_wallet(interaction: discord.Interaction,adress:str):
