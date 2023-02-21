@@ -3,6 +3,7 @@ from discord import app_commands
 from discord.ext import commands
 
 import time,json
+from typing import Optional
 
 line = ["course/payment",["article 1","article2"],"price","date"]
 FILE = "cogs/courses/courses.txt"
@@ -15,7 +16,7 @@ class courses(commands.Cog):
     async def add_course(self, interaction:discord.Interaction,articles:str,montant:float):
         course = ["course",articles.split(","),montant,time.time()]
         with open(FILE,"a") as f:
-            f.write(json.dumps(course)+"\n")
+            f.write("\n"+json.dumps(course))
         if len(articles.split(","))==1:
             await interaction.response.send_message(f"l'article {articles} accheté pour un montant de {montant} a bien été ajouté ")
         else:
@@ -30,7 +31,7 @@ class courses(commands.Cog):
     async def add_payment(self, interaction:discord.Interaction,montant:float):
         payment = ["payment",[],montant,time.time()]
         with open(FILE,"a") as f:
-            f.write(json.dumps(payment)+"\n")
+            f.write("\n"+json.dumps(payment))
         await interaction.response.send_message(f"le payment de {montant} a bien été joué ")
     
     @app_commands.command(name="how_much_i_have",description="permet de voir le montant possédé pour les courses")
@@ -45,6 +46,25 @@ class courses(commands.Cog):
                     montant-=line[2]
         await interaction.response.send_message(f"vous avez encore {round(montant,2)} euros ")
 
+    @app_commands.command(name="historique",description="permet de voir l'historique")
+    async def historique(self, interaction:discord.Interaction, last:int=10):
+        text=""
+        with open(FILE,"r") as f:
+            compteur=0
+            for line in f.read().split("\n")[::-1]:
+                if last==compteur:
+                    break
+                compteur+=1
+                line = json.loads(line)
+                articles = ""
+                for article in line[1]:
+                    articles+=article
+                    if not article==line[1][-1]:
+                        articles+=","
+                    else:
+                        articles+=" "
+                text+=f"{articles}{line[0]} de {line[2]} euros.{time.ctime(line[3])} \n"
+        await interaction.response.send_message(text)
         
 
 
