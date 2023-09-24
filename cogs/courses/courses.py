@@ -6,7 +6,7 @@ import time,json
 from typing import Optional
 
 line = ["course/payment",["article 1","article2"],"price","date"]
-FILE = "cogs/courses/courses.txt"
+FILE = "courses.txt"
 
 class courses(commands.Cog):
     def __init__(self, bot):
