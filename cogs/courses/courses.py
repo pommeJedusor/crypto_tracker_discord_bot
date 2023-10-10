@@ -48,7 +48,7 @@ class courses(commands.Cog):
 
     @app_commands.command(name="historique",description="permet de voir l'historique")
     async def historique(self, interaction:discord.Interaction, last:int=10):
-        text=""
+        text=[]
         with open(FILE,"r") as f:
             compteur=0
             for line in f:
@@ -63,8 +63,10 @@ class courses(commands.Cog):
                         articles+=","
                     else:
                         articles+=" "
-                text+=f"{articles}{line[0]} de {line[2]} euros.{time.ctime(line[3])} \n"
-        await interaction.response.send_message(text)
+                text.append(f"{articles}{line[0]} de {line[2]} euros.{time.ctime(line[3])} \n")
+        text.reverse()
+        print(text)
+        await interaction.response.send_message("".join(text))
         
 
 
