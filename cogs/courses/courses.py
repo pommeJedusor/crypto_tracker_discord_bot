@@ -51,7 +51,9 @@ class courses(commands.Cog):
         text=[]
         with open(FILE,"r") as f:
             compteur=0
-            for line in f:
+            lines = [i for i in f]
+            lines.reverse()
+            for line in lines:
                 if last==compteur:
                     break
                 compteur+=1
@@ -64,8 +66,6 @@ class courses(commands.Cog):
                     else:
                         articles+=" "
                 text.append(f"{articles}{line[0]} de {line[2]} euros.{time.ctime(line[3])} \n")
-        text.reverse()
-        print(text)
         await interaction.response.send_message("".join(text))
         
 
