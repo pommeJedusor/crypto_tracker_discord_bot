@@ -38,7 +38,10 @@ class courses(commands.Cog):
     async def how_much_i_have(self, interaction:discord.Interaction):
         montant = 0
         with open(FILE,"r") as f:
-            for line in f:
+            lines = f.read().split("\n")
+            for line in lines:
+                if not line.replace(" ",""):
+                    continue
                 line = json.loads(line)
                 if line[0]=="payment":
                     montant+=line[2]
